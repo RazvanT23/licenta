@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Tsunami Nutrition</title>
+    <link rel="stylesheet" href="style_products.css">
+    <link rel="stylesheet" href="style_loginButton.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="home.html">
+                <img src="logo2.png" alt="Fitness Welt Logo">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <a href="login.html" class="login-btn">Login/Register</a>
+    </header>
+
+    <section class="product-filters">
+        <input type="text" id="searchBar" placeholder="Search for products..." onkeyup="filterProducts()">
+        <div class="categories">
+            <button onclick="filterByCategory('all')">All</button>
+            <button onclick="filterByCategory('proteins')">Proteins</button>
+            <button onclick="filterByCategory('pre-workouts')">Pre Workouts</button>
+            <button onclick="filterByCategory('vitamins')">Vitamins</button>
+            <button onclick="filterByCategory('athlete-nutrition')">Athlete Nutrition</button>
+            <button onclick="filterByCategory('vegan-nutrition')">Vegan Nutrition</button>
+        </div>
+    </section>
+
+    <section class="product-list">
+
+        <div class="product" data-category="proteins">
+            <img src="protein1.jpg" alt="Protein Powder">
+            <h3>Whey Protein</h3>
+            <p>High-quality protein to help muscle recovery.</p>
+            <a href="wheyprotein.html" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="proteins">
+            <img src="isolate.jpg" alt="Isolate Protein">
+            <h3>Isolate Protein</h3>
+            <p>Pure protein with minimal carbs and fats.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="proteins">
+            <img src="casein.jpg" alt="Casein Protein">
+            <h3>Casein Protein</h3>
+            <p>Slow-digesting protein for sustained muscle support.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+
+        <!-- Pre Workouts -->
+        <div class="product" data-category="pre-workouts">
+            <img src="preworkout.jpg" alt="Pre Workout">
+            <h3>Pre Workout Boost</h3>
+            <p>Get the energy you need for an intense workout.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="pre-workouts">
+            <img src="caffeinerush.jpg" alt="Caffeine Rush">
+            <h3>Caffeine Rush</h3>
+            <p>High-energy formula to kickstart your workout.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="pre-workouts">
+            <img src="nitricoxide.jpg" alt="Nitric Oxide Booster">
+            <h3>Nitric Oxide Booster</h3>
+            <p>Enhance blood flow for better endurance.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+
+        <!-- Vitamins -->
+        <div class="product" data-category="vitamins">
+            <img src="dailyvitamins.jpg" alt="Vitamins">
+            <h3>Daily Vitamins</h3>
+            <p>Keep your body healthy with essential nutrients.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="vitamins">
+            <img src="vitamind.jpg" alt="Vitamin D">
+            <h3>Vitamin D Supplement</h3>
+            <p>Support bone health and immune function.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="vitamins">
+            <img src="vitaminc.jpg" alt="Vitamin C">
+            <h3>Vitamin C Boost</h3>
+            <p>Powerful antioxidant to support immunity.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+
+        <!-- Athlete Nutrition -->
+        <div class="product" data-category="athlete-nutrition">
+            <img src="siropcapsuni.png" alt="Athlete Nutrition">
+            <h3>0kcal Strawberry Syrup</h3>
+            <p>Specifically formulated for athletes.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="athlete-nutrition">
+            <img src="siropcaramel.jpg" alt="Endurance Fuel">
+            <h3>0kcal Caramel Syrup</h3>
+            <p>Tastes delicious.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="athlete-nutrition">
+            <img src="soscurry.avif" alt="Recovery Shake">
+            <h3>Curry Sos 0kcal</h3>
+            <p>Tastes so good</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+
+        <!-- Vegan Nutrition -->
+        <div class="product" data-category="vegan-nutrition">
+            <img src="batonvegan.jpg" alt="Vegan Nutrition">
+            <h3>Vegan Protein Bar</h3>
+            <p>Plant-based protein to fuel your lifestyle.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="vegan-nutrition">
+            <img src="peanutbutter.jpg" alt="Pea Protein">
+            <h3>Peanutbutter</h3>
+            <p>Pure, clean plant-based protein source.</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+        <div class="product" data-category="vegan-nutrition">
+            <img src="ceaiverde.jpg" alt="Hemp Protein">
+            <h3>Green Tea</h3>
+            <p>Good fat burner</p>
+            <a href="#" class="btn">View Product</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+          
+            <div class="footer-about">
+                <h2>About Tsunami Nutrition</h2>
+                <p>Your ultimate destination for high-quality fitness supplements and gear. Empowering you to achieve your fitness goals.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Tsunami Nutrition | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        function filterByCategory(category) {
+            const products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                if (category === 'all' || product.getAttribute('data-category') === category) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                const productName = product.querySelector('h3').innerText.toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

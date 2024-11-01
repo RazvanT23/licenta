@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Tsunami Nutrition</title>
+    <link rel="stylesheet" href="style_cart.css">
+    <link rel="stylesheet" href="style_loginButton.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="home.html">
+                <img src="logo2.png" alt="Tsunami Nutrition Logo">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <a href="login.html" class="login-btn">Login/Register</a> 
+
+    </header>
+
+    <section class="cart-container">
+        <h1>Your Shopping Cart</h1>
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                <!-- Items will be dynamically inserted here -->
+            </tbody>
+        </table>
+        <div class="cart-summary">
+            <h2>Cart Summary</h2>
+            <p id="cart-total">Total: $0.00</p>
+            <button id="checkout-btn" class="btn">Proceed to Checkout</button>
+        </div>
+    </section>
+
+
+
+    <script>
+        function loadCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+
+            // Get cart from local storage
+            let cart = localStorage.getItem('cart');
+            if (cart) {
+                cart = JSON.parse(cart);
+            } else {
+                cart = [];
+            }
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td><input type="number" value="${item.quantity}" min="1" data-id="${item.id}" class="quantity-input"></td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>$${itemTotal.toFixed(2)}</td>
+                    <td><button class="remove-btn" data-id="${item.id}">Remove</button></td>
+                `;
+                cartItemsContainer.appendChild(row);
+            });
+
+            document.getElementById('cart-total').textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        function updateQuantity(productId, newQuantity) {
+            let cart = localStorage.getItem('cart');
+            if (cart) {
+                cart = JSON.parse(cart);
+                const product = cart.find(item => item.id === productId);
+                if (product) {
+                    product.quantity = newQuantity;
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    loadCartItems();
+                }
+            }
+        }
+
+        function removeItem(productId) {
+            let cart = localStorage.getItem('cart');
+            if (cart) {
+                cart = JSON.parse(cart);
+                const index = cart.findIndex(item => item.id === productId);
+                if (index !== -1) {
+                    cart.splice(index, 1);
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    loadCartItems();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCartItems();
+
+            document.getElementById('cart-items').addEventListener('input', (event) => {
+                if (event.target.classList.contains('quantity-input')) {
+                    const productId = parseInt(event.target.getAttribute('data-id'));
+                    const newQuantity = parseInt(event.target.value);
+                    updateQuantity(productId, newQuantity);
+                }
+            });
+
+            document.getElementById('cart-items').addEventListener('click', (event) => {
+                if (event.target.classList.contains('remove-btn')) {
+                    const productId = parseInt(event.target.getAttribute('data-id'));
+                    removeItem(productId);
+                }
+            });
+        });
+    </script>
+
+<footer>
+    <div class="footer-container">
+      
+        <div class="footer-about">
+            <h2>About Tsunami Nutrition</h2>
+            <p>Your ultimate destination for high-quality fitness supplements and gear. Empowering you to achieve your fitness goals.</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Tsunami Nutrition | All Rights Reserved</p>
+    </div>
+</footer>
+
+</body>
+</html>

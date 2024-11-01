@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    
+    <link rel="stylesheet" href="style_register.css">
+    <link rel="stylesheet" href="style_loginButton.css"> 
+    
+
+    <header>
+        <div class="logo">
+            <a href="home.html">
+                <img src="logo2.png" alt="Tsnumai Nutrition Logo">
+            </a>
+        </div>
+
+
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <a href="login.html" class="login-btn">Login/Register</a> 
+
+    </header>
+
+
+
+    <script>
+        function validatePassword(password, confirmPassword) {
+            const minLength = 7;
+            const hasNumber = /\d/;
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
+            // Collecting error messages
+            const errors = [];
+
+            // Check if the password meets the length requirement
+            if (password.length < minLength) {
+                errors.push("Password must be at least 7 characters long.");
+            }
+            // Check for at least one number
+            if (!hasNumber.test(password)) {
+                errors.push("Password must contain at least one number.");
+            }
+            // Check for at least one special character
+            if (!hasSpecialChar.test(password)) {
+                errors.push("Password must contain at least one special character (!@#$%^&*(),.?\":{}|<>).");
+            }
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                errors.push("Passwords do not match.");
+            }
+
+            return errors.length > 0 ? errors.join(' ') : ""; // Return errors or an empty string
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("register-form");
+            const errorMessageDiv = document.getElementById("error-message");
+
+            form.addEventListener("submit", function (event) {
+                errorMessageDiv.textContent = ""; // Clear previous error messages
+                const password = document.getElementById("password").value;
+                const confirmPassword = document.getElementById("confirm-password").value; // Get confirm password
+                const errorMessage = validatePassword(password, confirmPassword); // Validate both passwords
+
+                if (errorMessage) {
+                errorMessageDiv.textContent = errorMessage; // Display error message
+                return;
+            }
+
+            const formData = new FormData(form);
+            fetch('http://localhost:3000/register', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    errorMessageDiv.textContent = data.error; // Display server error (e.g., email already registered)
+                } else {
+                    window.location.href = '/login'; // Redirect to login page on successful registration
+                }
+            })
+            .catch(error => {
+                errorMessageDiv.textContent = 'An unexpected error occurred. Please try again.';
+            });
+        });
+    });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <div id="error-message" style="color: red;">
+            
+        </div>
+        <form id="register-form" action="http://localhost:3000/register" method="POST">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password" required>
+            <br>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</body>
+
+
+<footer>
+    <div class="footer-container">
+      
+        <div class="footer-about">
+            <h2>About Tsunami Nutrition</h2>
+            <p>Your ultimate destination for high-quality fitness supplements and gear. Empowering you to achieve your fitness goals.</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 Tsunami Nutrition | All Rights Reserved</p>
+    </div>
+</footer>
+
+
+
+</html>

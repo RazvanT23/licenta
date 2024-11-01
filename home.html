@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tsunami Nutrition</title>
+    <link rel="stylesheet" href="style_home.css"> 
+    <script src="chatbot.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="home.html">
+                <img src="logo2.png" alt="Tsnumai Nutrition Logo">
+            </a>
+        </div>
+
+
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <a href="login.html" class="login-btn">Login/Register</a> 
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const isLoggedIn = localStorage.getItem("isLoggedIn");
+                const loginBtn = document.querySelector(".login-btn");
+                const dashboardBtn = document.createElement("a");
+                dashboardBtn.href = "dashboard.html";
+                dashboardBtn.className = "dashboard-btn";
+                dashboardBtn.innerText = "Dashboard";
+        
+                if (isLoggedIn) {
+                    loginBtn.replaceWith(dashboardBtn);
+                }
+            });
+        </script>
+        
+
+    </header>
+
+    <main>
+        <div class="chatbot-section">
+            <div class="side-image left-image">
+                <img src="imagehome1-Photoroom.png" alt="Left Side Image">
+            </div>
+
+            <div class="chatbot">
+                <p><strong>Chatbot:</strong> Hello! What is your goal in fitness?</p>
+                <input type="text" id="userInput" placeholder="Type your answer here...">
+                <button onclick="sendMessage()">Send</button>
+                <div id="chatbotResponse"></div> 
+            </div>
+
+            <div class="side-image right-image">
+                <img src="imagehome2-Photoroom.png" alt="Right Side Image">
+            </div>
+        </div>
+    </main>
+    
+
+    <footer>
+        <div class="footer-container">
+          
+            <div class="footer-about">
+                <h2>About Tsunami Nutrition</h2>
+                <p>Your ultimate destination for high-quality fitness supplements and gear. Empowering you to achieve your fitness goals.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Tsunami Nutrition | All Rights Reserved</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,278 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    flex:1;
+}
+
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    color: rgb(23, 33, 170);
+    padding: 20px;
+}
+
+
+
+
+
+header .logo {
+    display: flex;
+    align-items: center;
+}
+
+header .logo img {
+    width: 129px; 
+    height: auto;
+    margin-right: 15px;
+}
+
+header .logo a {
+    text-decoration: none;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+nav {
+    flex-grow: 1;
+    text-align: center;
+    margin-left: 400px; 
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ff0000;
+}
+
+main {
+    padding: 20px;
+}
+
+
+.login-btn {
+    background-color: #ff0000; 
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-right: 20px; 
+    position: relative;
+    transform:translateY(-20px)
+}
+
+.login-btn:hover {
+    background-color: #b30000;
+}
+
+
+
+.chatbot-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+    padding: 20px;
+}
+
+
+@media (max-width: 768px) {
+    .chatbot-section {
+        flex-direction: column;
+        align-items: center;
+    }
+    .side-image {
+        width: 80%; 
+        margin: 10px 0;
+    }
+}
+
+
+
+
+.chatbot-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px; /* Reduced margin to bring it closer to the footer */
+    padding: 20px;
+    gap: 20px; /* Add some spacing between images and chatbot */
+}
+
+
+.chatbot {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 500px; /* Controls max width between images */
+    font-size: 20px;
+    margin: 0 auto; /* Centers the chatbot */
+}
+
+
+.chatbot input[type="text"] {
+    padding: 14px; 
+    width: 80%; 
+    font-size: 18px; 
+    margin-right: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.chatbot button {
+    padding: 14px 25px; 
+    font-size: 18px;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.chatbot button:hover {
+    background-color: #555;
+}
+
+
+/* Center .chatbot-info directly below the .chatbot-section */
+.chatbot-info {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+    max-width: 700px;
+    margin: 0 auto; /* Centers the chatbot-info section */
+    font-size: 20px;
+}
+
+.chatbot-info h3 {
+    font-size: 28px; 
+    color: #ff0000; 
+    margin-bottom: 20px;
+}
+
+.chatbot-info p {
+    font-size: 20px; 
+    color: #555;
+}
+
+
+/* Style the chatbot response area */
+#chatbotResponse {
+    margin-top: 15px;
+    text-align: left; /* Aligns responses for better readability */
+    font-size: 18px;
+    color: #333;
+    max-width: 100%;
+}
+
+
+.side-image {
+    width: 40%; /* Adjust width to fit better with the chatbot */
+    margin: 0 10px; /* Reduced margin to keep the images closer */
+    display: flex;
+    justify-content: center; /* Centers image within its container */
+}
+
+.left-image, .right-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.left-image{
+    margin-bottom:-160px ;
+}
+
+
+.right-image{
+    margin-bottom: -60px;
+}
+
+
+.left-image img, .right-image img {
+    width: 100%; /* Makes the image take up the full width of its container */
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    width: 100%;
+    margin-top: 20px; /* Adds some margin to separate it from content above */
+}
+
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    margin: auto;
+}
+
+.footer-about h2 {
+    font-size: 18px;
+    color: #ff0000;
+    margin-bottom: 10px;
+}
+
+.footer-about p {
+    font-size: 14px;
+    color: #ccc;
+    margin: 0;
+    max-width: 600px;
+}
+
+.footer-bottom {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    justify-content: center; /* Centers content vertically */
+}

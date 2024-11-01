@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whey Protein - Tsunami Nutrition</title>
+    <link rel="stylesheet" href="wheyprotein.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="home.html">
+                <img src="logo2.png" alt="Tsunami Nutrition Logo">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <span id="cart-count" class="cart-icon">0</span>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="product-details">
+        <div class="product-image">
+            <img src="protein1.jpg" alt="Whey Protein">
+        </div>
+        <div class="product-info">
+            <h1 id="product-name">Loading...</h1>
+            <p id="product-description">Loading...</p>
+            <h2 id="product-price">$0.00</h2>
+            <button id="add-to-cart" class="btn">Add to Cart</button>
+            <button onclick="window.location.href='products.html'" class="btn">Back to Products</button> 
+        
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const productId = 1; // Replace with dynamic ID if needed
+    
+            // Fetch product details from the server
+            fetch('http://localhost:3000/product/' + productId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('product-name').textContent = data.name;
+                    document.getElementById('product-description').textContent = data.description;
+                    document.getElementById('product-price').textContent = `$${data.price}`;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+    
+            // Add to Cart button functionality
+            document.getElementById('add-to-cart').addEventListener('click', function () {
+                const cartItem = {
+                    id: productId,
+                    name: document.getElementById('product-name').textContent,
+                    price: parseFloat(document.getElementById('product-price').textContent.replace('$', '')),
+                    quantity: 1
+                };
+    
+                // Save to local storage
+                let cart = localStorage.getItem('cart');
+                if (cart) {
+                    cart = JSON.parse(cart);
+                } else {
+                    cart = [];
+                }
+    
+                // Check if the product already exists in the cart
+                const existingItemIndex = cart.findIndex(item => item.id === cartItem.id);
+                if (existingItemIndex !== -1) {
+                    cart[existingItemIndex].quantity += 1;
+                } else {
+                    cart.push(cartItem);
+                }
+    
+                localStorage.setItem('cart', JSON.stringify(cart));
+                alert('Product added to cart successfully!');
+                updateCartCount(); // Update cart count immediately after adding
+            });
+    
+            function updateCartCount() {
+                let cart = localStorage.getItem('cart');
+                let count = 0;
+                if (cart) {
+                    cart = JSON.parse(cart);
+                    count = cart.reduce((total, item) => total + item.quantity, 0);
+                }
+                const cartCountElement = document.getElementById('cart-count');
+                if (cartCountElement) {
+                    cartCountElement.textContent = count;
+                }
+            }
+    
+            // Initial load to set the cart count
+            updateCartCount();
+        });
+    </script>
+    <footer>
+        <p>Tsunami Nutrition &copy; 2024</p>
+    </footer>
+</body>
+</html>

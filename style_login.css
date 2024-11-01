@@ -1,0 +1,55 @@
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+    margin: 0 auto; /* Centers horizontally */
+    position: relative;
+    top: 16%; /* Reduced from 50% to bring it higher */
+    transform: translateY(-30%); /* Adjust to maintain vertical centering */
+}
+
+
+h1 {
+    margin-bottom: 20px;
+}
+
+input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #ff0000; 
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 18px;
+    position: relative;
+    transform: translateY(1px); /* Consistent with home page style */
+    
+}
+
+button:hover {
+    background-color: #b30000;
+}
+
+.register-link {
+    margin-top: 20px;
+}
+
+.register-link a {
+    color: #ff0000; /* Consistent with the button hover color in home page */
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
