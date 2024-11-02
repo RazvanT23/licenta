@@ -61,38 +61,40 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("register-form");
-            const errorMessageDiv = document.getElementById("error-message");
+    const form = document.getElementById("register-form");
+    const errorMessageDiv = document.getElementById("error-message");
 
-            form.addEventListener("submit", function (event) {
-                errorMessageDiv.textContent = ""; // Clear previous error messages
-                const password = document.getElementById("password").value;
-                const confirmPassword = document.getElementById("confirm-password").value; // Get confirm password
-                const errorMessage = validatePassword(password, confirmPassword); // Validate both passwords
+    form.addEventListener("submit", function (event) {
+        errorMessageDiv.textContent = ""; // Clear previous error messages
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirm-password").value; // Get confirm password
+        const errorMessage = validatePassword(password, confirmPassword); // Validate both passwords
 
-                if (errorMessage) {
-                errorMessageDiv.textContent = errorMessage; // Display error message
-                return;
+        if (errorMessage) {
+            errorMessageDiv.textContent = errorMessage; // Display error message
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+
+        const formData = new FormData(form);
+        fetch('http://localhost:3000/register', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                errorMessageDiv.textContent = data.error; // Display server error (e.g., email already registered)
+            } else {
+                window.location.href = '/login'; // Redirect to login page on successful registration
             }
-
-            const formData = new FormData(form);
-            fetch('http://localhost:3000/register', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    errorMessageDiv.textContent = data.error; // Display server error (e.g., email already registered)
-                } else {
-                    window.location.href = '/login'; // Redirect to login page on successful registration
-                }
-            })
-            .catch(error => {
-                errorMessageDiv.textContent = 'An unexpected error occurred. Please try again.';
-            });
+        })
+        .catch(error => {
+            errorMessageDiv.textContent = 'An unexpected error occurred. Please try again.';
         });
     });
+});
+
     </script>
 </head>
 <body>

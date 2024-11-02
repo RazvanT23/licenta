@@ -38,7 +38,11 @@ app.get('/', (req, res) => {
 // Handle user registration
 app.post('/register', [
     body('email').isEmail().withMessage('Please enter a valid email address'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'), // Add password validation
+    body('password')
+    .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
+    .matches(/\d/).withMessage('Password must contain at least one number')
+    .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage('Password must contain at least one special character'),
+
 ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
