@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
-    <link rel="stylesheet" href="style_dashboard.css">
+    <link rel="stylesheet" href="style_dashboard.css"> 
 </head>
 <body>
     <header>
@@ -19,59 +19,36 @@
                 <li><a href="products.html">Products</a></li>
                 <li><a href="cart.html">Cart</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><a href="#" onclick="logout()">Logout</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <h1>Welcome to Your Dashboard</h1>
-        <div id="user-info">
-            <!-- User information will be displayed here -->
+        <div class="dashboard-container">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>This is a personalized area for users who are logged in. Here, you can view your account details, orders, and more.</p>
+            <!-- Add additional dashboard sections as needed -->
+            <button onclick="logout()">Logout</button>
         </div>
-        <section>
-            <h2>Your Orders</h2>
-            <p>Manage your orders here.</p>
-        </section>
-        <section>
-            <h2>Profile Settings</h2>
-            <p>Update your profile and account settings.</p>
-        </section>
     </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Check if the user is logged in
-            if (!localStorage.getItem("isLoggedIn")) {
-                window.location.href = "login.html"; // Redirect to login if not logged in
-            } else {
-                displayUserInfo();
-            }
-        });
-
-        // Function to display user information
-        function displayUserInfo() {
-            const userInfoDiv = document.getElementById("user-info");
-
-            // Example data - replace with dynamic user data if available
-            const userData = {
-                name: "John Doe",
-                email: "johndoe@example.com",
-                membership: "Premium Member",
-            };
-
-            userInfoDiv.innerHTML = `
-                <h2>Hello, ${userData.name}</h2>
-                <p>Email: ${userData.email}</p>
-                <p>Membership Status: ${userData.membership}</p>
-            `;
-        }
-
-        // Logout function to clear login status and redirect to login page
         function logout() {
             localStorage.removeItem("isLoggedIn");
-            window.location.href = "login.html";
+            window.location.href = "home.html";  // Redirect to home page after logout
         }
     </script>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-about">
+                <h2>About Tsunami Nutrition</h2>
+                <p>Your ultimate destination for high-quality fitness supplements and gear. Empowering you to achieve your fitness goals.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Tsunami Nutrition | All Rights Reserved</p>
+        </div>
+    </footer>
 </body>
 </html>

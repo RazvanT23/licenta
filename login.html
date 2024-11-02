@@ -61,23 +61,27 @@
         });
 
         function handleLogin(event) {
-            event.preventDefault();
-
-            fetch('http://localhost:3000/login', {
-                method: 'POST',
-                body: new FormData(event.target)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    localStorage.setItem("isLoggedIn", "true");
-                    window.location.href = "dashboard.html";
-                } else {
-                    alert(data.message || "Login failed. Please check your credentials.");
-                }
-            })
-            .catch(error => console.error('Error:', error));
+    event.preventDefault();
+    
+    fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            email: document.getElementById("login-email").value,
+            password: document.getElementById("login-password").value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            localStorage.setItem("isLoggedIn", "true");
+            window.location.href = "dashboard.html";
+        } else {
+            alert(data.message || "Login failed. Please check your credentials.");
         }
+    })
+    .catch(error => console.error('Error:', error));
+}
     </script>
 </body>
 

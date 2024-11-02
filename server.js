@@ -80,25 +80,22 @@ app.get('/home', (req, res) => {
 });
 
 
-// Handle user login
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// Add route for login
 app.post('/login', (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-
-    if (!email || !password) {
-        return res.status(400).send('Email and password are required.');
-    }
-
-    const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
-    db.query(sql, [email, password], (err, results) => { 
+    const { email, password } = req.body;
+    const sql = `SELECT * FROM users WHERE email = ? AND password = ?`;
+    
+    db.query(sql, [email, password], (err, result) => {
         if (err) {
-            return res.status(500).send('Login failed due to server error.');
-        }
-
-        if (results.length > 0) {
-            res.redirect('/home');
+            res.status(500).json({ success: false, message: "Error during login." });
+        } else if (result.length > 0) {
+            res.json({ success: true });
         } else {
-            res.send('Incorrect email or password.');
+            res.json({ success: false, message: "Invalid credentials." });
         }
     });
 });
