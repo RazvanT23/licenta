@@ -6,6 +6,9 @@
     <title>Cart - Tsunami Nutrition</title>
     <link rel="stylesheet" href="style_cart.css">
     <link rel="stylesheet" href="style_loginButton.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="cartFunctions.js"></script>
+
 </head>
 <body>
     <header>
@@ -52,23 +55,68 @@
 
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadCartItems();
+            updateCartCount(); // Update the cart count when the cart page is loaded
+        
+            document.getElementById('cart-items').addEventListener('input', function (event) {
+                if (event.target.classList.contains('quantity-input')) {
+                    const productId = parseInt(event.target.getAttribute('data-id'));
+                    const newQuantity = parseInt(event.target.value);
+                    updateQuantity(productId, newQuantity);
+                }
+            });
+        
+            document.getElementById('cart-items').addEventListener('click', function (event) {
+                if (event.target.classList.contains('remove-btn')) {
+                    const productId = parseInt(event.target.getAttribute('data-id'));
+                    removeItem(productId);
+                }
+            });
+        
+            document.getElementById('checkout-btn').addEventListener('click', async function () {
+                // Initialize Stripe with your test publishable key
+                const stripe = Stripe('pk_test_51QGJBUDtj4OjoiAnRnliveJFmN7LEf1zkDuPSLn326rTSmbbLyLBSA8ymg3PKWBeCagq4SvmHXbnNL9qxnR55J1S00wn09dl2K');
+        
+                let cart = localStorage.getItem('cart');
+                cart = cart ? JSON.parse(cart) : [];
+        
+                if (cart.length === 0) {
+                    alert("Your cart is empty");
+                    return;
+                }
+        
+                try {
+                    const response = await fetch('http://localhost:4242/create-checkout-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ items: cart })
+                    });
+        
+                    const session = await response.json();
+                    await stripe.redirectToCheckout({ sessionId: session.id });
+
+
+                } catch (error) {
+                    console.error("Error creating checkout session:", error);
+                }
+            });
+        });
+        
         function loadCartItems() {
             const cartItemsContainer = document.getElementById('cart-items');
             cartItemsContainer.innerHTML = '';
             let total = 0;
-
-            // Get cart from local storage
+        
             let cart = localStorage.getItem('cart');
-            if (cart) {
-                cart = JSON.parse(cart);
-            } else {
-                cart = [];
-            }
-
+            cart = cart ? JSON.parse(cart) : [];
+        
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
-
+        
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${item.name}</td>
@@ -79,55 +127,24 @@
                 `;
                 cartItemsContainer.appendChild(row);
             });
-
+        
             document.getElementById('cart-total').textContent = `Total: $${total.toFixed(2)}`;
         }
-
-        function updateQuantity(productId, newQuantity) {
+        
+        function updateCartCount() {
             let cart = localStorage.getItem('cart');
+            let count = 0;
             if (cart) {
                 cart = JSON.parse(cart);
-                const product = cart.find(item => item.id === productId);
-                if (product) {
-                    product.quantity = newQuantity;
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    loadCartItems();
-                }
+                count = cart.reduce((total, item) => total + item.quantity, 0);
+            }
+            const cartCountElement = document.querySelector('#cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
             }
         }
-
-        function removeItem(productId) {
-            let cart = localStorage.getItem('cart');
-            if (cart) {
-                cart = JSON.parse(cart);
-                const index = cart.findIndex(item => item.id === productId);
-                if (index !== -1) {
-                    cart.splice(index, 1);
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    loadCartItems();
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCartItems();
-
-            document.getElementById('cart-items').addEventListener('input', (event) => {
-                if (event.target.classList.contains('quantity-input')) {
-                    const productId = parseInt(event.target.getAttribute('data-id'));
-                    const newQuantity = parseInt(event.target.value);
-                    updateQuantity(productId, newQuantity);
-                }
-            });
-
-            document.getElementById('cart-items').addEventListener('click', (event) => {
-                if (event.target.classList.contains('remove-btn')) {
-                    const productId = parseInt(event.target.getAttribute('data-id'));
-                    removeItem(productId);
-                }
-            });
-        });
-    </script>
+        </script>
+        
 
 <footer>
     <div class="footer-container">

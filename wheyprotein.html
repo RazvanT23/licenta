@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Whey Protein - Tsunami Nutrition</title>
     <link rel="stylesheet" href="wheyprotein.css">
+    <script src="cartFunctions.js"></script>
+
 </head>
 <body>
     <header>
@@ -41,7 +43,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const productId = 1; // Replace with dynamic ID if needed
-    
+        
             // Fetch product details from the server
             fetch('http://localhost:3000/product/' + productId)
                 .then(response => {
@@ -58,37 +60,34 @@
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
                 });
-    
+        
             // Add to Cart button functionality
             document.getElementById('add-to-cart').addEventListener('click', function () {
-                const cartItem = {
-                    id: productId,
-                    name: document.getElementById('product-name').textContent,
-                    price: parseFloat(document.getElementById('product-price').textContent.replace('$', '')),
-                    quantity: 1
-                };
-    
-                // Save to local storage
-                let cart = localStorage.getItem('cart');
-                if (cart) {
-                    cart = JSON.parse(cart);
-                } else {
-                    cart = [];
-                }
-    
-                // Check if the product already exists in the cart
-                const existingItemIndex = cart.findIndex(item => item.id === cartItem.id);
-                if (existingItemIndex !== -1) {
-                    cart[existingItemIndex].quantity += 1;
-                } else {
-                    cart.push(cartItem);
-                }
-    
-                localStorage.setItem('cart', JSON.stringify(cart));
-                alert('Product added to cart successfully!');
-                updateCartCount(); // Update cart count immediately after adding
-            });
-    
+    const cartItem = {
+        id: productId,
+        name: document.getElementById('product-name').textContent,
+        price: parseFloat(document.getElementById('product-price').textContent.replace('$', '')),
+        quantity: 1
+    };
+
+    // Get cart from local storage
+    let cart = localStorage.getItem('cart');
+    cart = cart ? JSON.parse(cart) : [];
+
+    // Check if the product already exists in the cart
+    const existingItemIndex = cart.findIndex(item => item.id === cartItem.id);
+    if (existingItemIndex !== -1) {
+        cart[existingItemIndex].quantity += 1;
+    } else {
+        cart.push(cartItem);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Product added to cart successfully!');
+    updateCartCount(); // Update cart count immediately after adding
+});
+
+        
             function updateCartCount() {
                 let cart = localStorage.getItem('cart');
                 let count = 0;
@@ -101,11 +100,12 @@
                     cartCountElement.textContent = count;
                 }
             }
-    
+        
             // Initial load to set the cart count
             updateCartCount();
         });
-    </script>
+        </script>
+        
     <footer>
         <p>Tsunami Nutrition &copy; 2024</p>
     </footer>
