@@ -17,12 +17,27 @@
         <nav>
             <ul>
                 <li><a href="home.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
+                <li><a href="products2.html">Products</a></li>
                 <li><a href="cart.html">Cart</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
         <a href="login.html" class="login-btn">Login/Register</a>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const isLoggedIn = localStorage.getItem("isLoggedIn");
+                const loginBtn = document.querySelector(".login-btn");
+                const dashboardBtn = document.createElement("a");
+                dashboardBtn.href = "dashboard.html";
+                dashboardBtn.className = "dashboard-btn";
+                dashboardBtn.innerText = "Dashboard";
+            
+                if (isLoggedIn) {
+                    loginBtn.replaceWith(dashboardBtn);
+                }
+            });
+                    </script>
+                    
     </header>
 
     <main>

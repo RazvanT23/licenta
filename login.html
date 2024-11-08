@@ -62,7 +62,8 @@
 
         function handleLogin(event) {
     event.preventDefault();
-    
+    console.log("Login form submitted"); // Add this line
+
     fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -75,6 +76,8 @@
     .then(data => {
         if (data.success) {
             localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("userId", data.userId); // Store user ID in localStorage
+
             window.location.href = "dashboard.html";
         } else {
             alert(data.message || "Login failed. Please check your credentials.");
@@ -82,6 +85,7 @@
     })
     .catch(error => console.error('Error:', error));
 }
+
     </script>
 </body>
 

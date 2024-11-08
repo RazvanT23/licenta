@@ -16,7 +16,7 @@
         <nav>
             <ul>
                 <li><a href="home.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
+                <li><a href="products2.html">Products</a></li>
                 <li><a href="cart.html">Cart</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
@@ -37,6 +37,33 @@
             localStorage.removeItem("isLoggedIn");
             window.location.href = "home.html";  // Redirect to home page after logout
         }
+
+
+        async function fetchOrders() {
+        try {
+            const response = await fetch('/user/orders');
+            const orders = await response.json();
+
+            const orderContainer = document.getElementById('order-history');
+            orders.forEach(order => {
+                const orderDiv = document.createElement('div');
+                orderDiv.innerHTML = `
+                    <p>Order ID: ${order.orderId}</p>
+                    <p>Total Amount: $${order.total_amount}</p>
+                    <p>Order Date: ${order.order_date}</p>
+                    <p>Product: ${order.productName} - Quantity: ${order.quantity} - Price: $${order.price}</p>
+                `;
+                orderContainer.appendChild(orderDiv);
+            });
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchOrders);
+
+
+
     </script>
     
     <footer>

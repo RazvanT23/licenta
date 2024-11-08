@@ -86,7 +86,7 @@
             if (data.error) {
                 errorMessageDiv.textContent = data.error; // Display server error (e.g., email already registered)
             } else {
-                window.location.href = '/login'; // Redirect to login page on successful registration
+                window.location.href = 'login.html'; // Redirect to login page on successful registration
             }
         })
         .catch(error => {

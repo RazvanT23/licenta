@@ -2,23 +2,26 @@ const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
 const { body, validationResult } = require('express-validator');
+const cors = require('cors');
 
-const app = express();
+const app = express(); // Initialize app before using it
+app.use(cors());
+
 console.log('Starting server...');
 
 // Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json()); 
+app.use(express.json());
 
 // Serve static files (like CSS)
-app.use(express.static(path.join(__dirname))); // Ensure this is included to serve CSS files
+app.use(express.static(path.join(__dirname)));
 
 // MySQL connection setup
 const db = mysql.createConnection({
     host: '127.0.0.1',
-    user: 'root', 
-    password: 'razvandiandra', 
-    database: 'user_authentication' 
+    user: 'root',
+    password: 'razvandiandra',
+    database: 'user_authentication'
 });
 
 // Connect to MySQL
@@ -29,7 +32,6 @@ db.connect((err) => {
     }
     console.log('Connected to MySQL');
 });
-
 // Serve the registration form
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'register.html'));
@@ -91,14 +93,26 @@ app.use(bodyParser.json());
 // Add route for login
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-    const sql = `SELECT * FROM users WHERE email = ? AND password = ?`;
-    
+
+    if (!email || !password) {
+        console.log("Email or password missing");
+        return res.status(400).json({ success: false, message: "Email and password are required." });
+    }
+
+    console.log("Login attempt with:", email, password); // Debugging log
+
+    const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
     db.query(sql, [email, password], (err, result) => {
         if (err) {
-            res.status(500).json({ success: false, message: "Error during login." });
-        } else if (result.length > 0) {
-            res.json({ success: true });
+            console.error("Error during login query:", err);
+            return res.status(500).json({ success: false, message: "Error during login." });
+        } 
+        
+        if (result.length > 0) {
+            console.log("User found:", result[0]); // Debugging log
+            res.json({ success: true, userId: result[0].id });
         } else {
+            console.log("Invalid credentials provided"); // Debugging log
             res.json({ success: false, message: "Invalid credentials." });
         }
     });

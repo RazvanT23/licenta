@@ -20,12 +20,27 @@
         <nav>
             <ul>
                 <li><a href="home.html">Home</a></li>
-                <li><a href="products.html">Products</a></li>
+                <li><a href="products2.html">Products</a></li>
                 <li><a href="cart.html">Cart</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
         <a href="login.html" class="login-btn">Login/Register</a> 
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const isLoggedIn = localStorage.getItem("isLoggedIn");
+                const loginBtn = document.querySelector(".login-btn");
+                const dashboardBtn = document.createElement("a");
+                dashboardBtn.href = "dashboard.html";
+                dashboardBtn.className = "dashboard-btn";
+                dashboardBtn.innerText = "Dashboard";
+            
+                if (isLoggedIn) {
+                    loginBtn.replaceWith(dashboardBtn);
+                }
+            });
+                    </script>
+                    
 
     </header>
 
@@ -73,37 +88,49 @@
                     removeItem(productId);
                 }
             });
-        
-            document.getElementById('checkout-btn').addEventListener('click', async function () {
-                // Initialize Stripe with your test publishable key
-                const stripe = Stripe('pk_test_51QGJBUDtj4OjoiAnRnliveJFmN7LEf1zkDuPSLn326rTSmbbLyLBSA8ymg3PKWBeCagq4SvmHXbnNL9qxnR55J1S00wn09dl2K');
-        
-                let cart = localStorage.getItem('cart');
-                cart = cart ? JSON.parse(cart) : [];
-        
-                if (cart.length === 0) {
-                    alert("Your cart is empty");
-                    return;
-                }
-        
-                try {
-                    const response = await fetch('http://localhost:4242/create-checkout-session', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ items: cart })
-                    });
-        
-                    const session = await response.json();
-                    await stripe.redirectToCheckout({ sessionId: session.id });
-
-
-                } catch (error) {
-                    console.error("Error creating checkout session:", error);
-                }
-            });
         });
+        document.getElementById('checkout-btn').addEventListener('click', async function () {
+    const stripe = Stripe('pk_test_51QGJBUDtj4OjoiAnRnliveJFmN7LEf1zkDuPSLn326rTSmbbLyLBSA8ymg3PKWBeCagq4SvmHXbnNL9qxnR55J1S00wn09dl2K');
+    let cart = localStorage.getItem('cart');
+    cart = cart ? JSON.parse(cart) : [];
+
+    const userId = localStorage.getItem("userId"); // Retrieve actual user ID
+
+    if (!userId) {
+        alert("Please log in before proceeding to checkout.");
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert("Your cart is empty");
+        return;
+    }
+
+    try {
+        // Initialize session with userId and cart data
+        await fetch('http://localhost:4242/start-checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // Include cookies with requests
+
+            body: JSON.stringify({ userId, cart })
+        });
+
+        // Create Stripe checkout session
+const response = await fetch('http://localhost:4242/create-checkout-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include', // Include cookies with requests
+    body: JSON.stringify({ items: cart, userId })
+});
+
+        const session = await response.json();
+        await stripe.redirectToCheckout({ sessionId: session.id });
+    } catch (error) {
+        console.error("Error during checkout:", error);
+    }
+});
+
         
         function loadCartItems() {
             const cartItemsContainer = document.getElementById('cart-items');
