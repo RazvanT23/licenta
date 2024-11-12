@@ -25,45 +25,79 @@
 
     <main>
         <div class="dashboard-container">
-            <h1>Welcome to Your Dashboard</h1>
-            <p>This is a personalized area for users who are logged in. Here, you can view your account details, orders, and more.</p>
-            <!-- Add additional dashboard sections as needed -->
+            <h1 id="greeting">Welcome to Your Dashboard</h1>
+            <p>Here, you can view your account details, orders, and favorites.</p>
+            
+            <h2>Your Favorite Products</h2>
+            <div id="favorites-container" class="favorites-grid"></div>
+            
             <button onclick="logout()">Logout</button>
         </div>
     </main>
-
+    
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetchUserEmail();
+            fetchFavorites();
+        });
+    
+        function fetchUserEmail() {
+            const userId = localStorage.getItem("userId");
+            fetch(`http://localhost:4243/get-user-email/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const greeting = document.getElementById("greeting");
+                    greeting.textContent = `Hello, ${data.email}! Welcome to Your Dashboard`;
+                })
+                .catch(error => console.error("Error fetching user email:", error));
+        }
+    
+        function fetchFavorites() {
+            const userId = localStorage.getItem("userId");
+            fetch(`http://localhost:4243/get-favorites/${userId}`)
+                .then(response => response.json())
+                .then(favorites => {
+                    const container = document.getElementById("favorites-container");
+                    container.innerHTML = ""; 
+                    favorites.forEach(product => {
+                        const productDiv = document.createElement("div");
+                        productDiv.className = "product-card";
+                        productDiv.innerHTML = `
+                            <img src="${product.image_url}" alt="${product.name}">
+                            <h3>${product.name}</h3>
+                            <p>${product.description}</p>
+                            <p>Price: $${product.price.toFixed(2)}</p>
+                            <button onclick="removeFromFavorites(${product.id})">Remove from Favorites</button>
+                        `;
+                        container.appendChild(productDiv);
+                    });
+                })
+                .catch(error => console.error("Error fetching favorites:", error));
+        }
+    
+        function removeFromFavorites(productId) {
+            const userId = localStorage.getItem("userId");
+            fetch('http://localhost:4243/remove-favorite', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, productId })
+            })
+            .then(response => response.text())
+            .then(message => {
+                alert(message);
+                fetchFavorites();
+            })
+            .catch(error => console.error("Error removing favorite:", error));
+        }
+        
         function logout() {
+            // Clear login-related data from localStorage
             localStorage.removeItem("isLoggedIn");
-            window.location.href = "home.html";  // Redirect to home page after logout
+            localStorage.removeItem("userId");  // Clear userId as well
+
+            // Redirect to the home page
+            window.location.href = "home.html";
         }
-
-
-        async function fetchOrders() {
-        try {
-            const response = await fetch('/user/orders');
-            const orders = await response.json();
-
-            const orderContainer = document.getElementById('order-history');
-            orders.forEach(order => {
-                const orderDiv = document.createElement('div');
-                orderDiv.innerHTML = `
-                    <p>Order ID: ${order.orderId}</p>
-                    <p>Total Amount: $${order.total_amount}</p>
-                    <p>Order Date: ${order.order_date}</p>
-                    <p>Product: ${order.productName} - Quantity: ${order.quantity} - Price: $${order.price}</p>
-                `;
-                orderContainer.appendChild(orderDiv);
-            });
-        } catch (error) {
-            console.error("Error fetching orders:", error);
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", fetchOrders);
-
-
-
     </script>
     
     <footer>

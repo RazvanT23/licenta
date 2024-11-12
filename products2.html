@@ -41,9 +41,9 @@
     </header>
 
     <main>
-        <section class="products-container" id="products-container">
-            <h1>Our Products</h1>
-            <!-- Products will be dynamically inserted here -->
+        <section class="products-section">
+            <h1>Our Products</h1> <!-- Move this above the product container -->
+            <div class="product-list" id="products-container"></div>
         </section>
     </main>
 
@@ -53,27 +53,43 @@
         });
 
         function fetchProducts() {
-            // Fetch products from the server (assuming you have an endpoint to get products)
-            fetch('http://localhost:4243/get-products')
-                .then(response => response.json())
-                .then(products => {
-                    const container = document.getElementById('products-container');
+    fetch('http://localhost:4243/get-products')
+        .then(response => response.json())
+        .then(products => {
+            const container = document.getElementById('products-container');
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product-card';
+                productDiv.innerHTML = `
+                    <img src="${product.image_url}" alt="${product.name}">
+                    <h2>${product.name}</h2>
+                    <p>${product.description}</p>
+                    <p>Price: $${product.price.toFixed(2)}</p>
+                    <button onclick="addToFavorites(${product.id})">Add to Favorites</button>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                `;
+                container.appendChild(productDiv);
+            });
+        })
+        .catch(error => console.error('Error fetching products:', error));
+}
 
-                    products.forEach(product => {
-                        const productDiv = document.createElement('div');
-                        productDiv.className = 'product';
-                        productDiv.innerHTML = `
-                            <img src="${product.image_url}" alt="${product.name}">
-                            <h2>${product.name}</h2>
-                            <p>${product.description}</p>
-                            <p>Price: $${product.price.toFixed(2)}</p>
-                            <button onclick="addToCart(${product.id})">Add to Cart</button>
-                        `;
-                        container.appendChild(productDiv);
-                    });
-                })
-                .catch(error => console.error('Error fetching products:', error));
-        }
+function addToFavorites(productId) {
+    const userId = localStorage.getItem('userId'); // Retrieve the logged-in user's ID
+    if (!userId) {
+        alert('Please log in to add favorites.');
+        return;
+    }
+
+    fetch('http://localhost:4243/add-favorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, productId })
+    })
+    .then(response => response.text())
+    .then(message => alert(message))
+    .catch(error => console.error('Error adding favorite:', error));
+}
 
         function addToCart(productId) {
             let cart = localStorage.getItem('cart');
@@ -81,7 +97,7 @@
 
             const productIndex = cart.findIndex(item => item.id === productId);
             if (productIndex === -1) {
-                // Assuming the product details are known, such as fetched and stored beforehand
+                
                 fetch(`http://localhost:4243/get-product/${productId}`)
                     .then(response => response.json())
                     .then(product => {

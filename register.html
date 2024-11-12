@@ -37,27 +37,27 @@
             const hasNumber = /\d/;
             const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
-            // Collecting error messages
+            
             const errors = [];
 
-            // Check if the password meets the length requirement
+            
             if (password.length < minLength) {
                 errors.push("Password must be at least 7 characters long.");
             }
-            // Check for at least one number
+            
             if (!hasNumber.test(password)) {
                 errors.push("Password must contain at least one number.");
             }
-            // Check for at least one special character
+            
             if (!hasSpecialChar.test(password)) {
                 errors.push("Password must contain at least one special character (!@#$%^&*(),.?\":{}|<>).");
             }
-            // Check if passwords match
+            
             if (password !== confirmPassword) {
                 errors.push("Passwords do not match.");
             }
 
-            return errors.length > 0 ? errors.join(' ') : ""; // Return errors or an empty string
+            return errors.length > 0 ? errors.join(' ') : ""; 
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -65,14 +65,14 @@
     const errorMessageDiv = document.getElementById("error-message");
 
     form.addEventListener("submit", function (event) {
-        errorMessageDiv.textContent = ""; // Clear previous error messages
+        errorMessageDiv.textContent = ""; 
         const password = document.getElementById("password").value;
-        const confirmPassword = document.getElementById("confirm-password").value; // Get confirm password
-        const errorMessage = validatePassword(password, confirmPassword); // Validate both passwords
+        const confirmPassword = document.getElementById("confirm-password").value; 
+        const errorMessage = validatePassword(password, confirmPassword); 
 
         if (errorMessage) {
-            errorMessageDiv.textContent = errorMessage; // Display error message
-            event.preventDefault(); // Prevent form submission
+            errorMessageDiv.textContent = errorMessage; 
+            event.preventDefault(); 
             return;
         }
 
@@ -84,9 +84,9 @@
         .then(response => response.json())
         .then(data => {
             if (data.error) {
-                errorMessageDiv.textContent = data.error; // Display server error (e.g., email already registered)
+                errorMessageDiv.textContent = data.error; 
             } else {
-                window.location.href = 'login.html'; // Redirect to login page on successful registration
+                window.location.href = 'login.html'; 
             }
         })
         .catch(error => {
