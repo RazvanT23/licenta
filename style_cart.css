@@ -1,4 +1,4 @@
-/* General Styles */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -42,7 +42,7 @@ nav ul li a:hover {
     color: #ff0000;
 }
 
-/* Cart Container */
+
 .cart-container {
     max-width: 1000px;
     margin: 40px auto;
@@ -59,7 +59,7 @@ nav ul li a:hover {
     margin-bottom: 20px;
 }
 
-/* Cart Table */
+
 .cart-table {
     width: 100%;
     border-collapse: collapse;
@@ -105,7 +105,7 @@ nav ul li a:hover {
     background-color: #cc0000;
 }
 
-/* Cart Summary */
+
 .cart-summary {
     text-align: right;
     margin-top: 20px;

@@ -87,9 +87,10 @@ function addToFavorites(productId) {
         body: JSON.stringify({ userId, productId })
     })
     .then(response => response.text())
-    .then(message => alert(message))
+    .then(message => alert(message)) // Display the server's message to the user
     .catch(error => console.error('Error adding favorite:', error));
 }
+
 
         function addToCart(productId) {
             let cart = localStorage.getItem('cart');

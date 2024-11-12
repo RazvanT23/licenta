@@ -5,10 +5,10 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 300px;
     text-align: center;
-    margin: 0 auto; /* Centers horizontally */
+    margin: 0 auto; 
     position: relative;
-    top: 16%; /* Reduced from 50% to bring it higher */
-    transform: translateY(-30%); /* Adjust to maintain vertical centering */
+    top: 16%; 
+    transform: translateY(-30%); 
 }
 
 
@@ -33,7 +33,7 @@ button {
     border: none;
     font-size: 18px;
     position: relative;
-    transform: translateY(1px); /* Consistent with home page style */
+    transform: translateY(1px); 
     
 }
 
@@ -46,7 +46,7 @@ button:hover {
 }
 
 .register-link a {
-    color: #ff0000; /* Consistent with the button hover color in home page */
+    color: #ff0000; 
     text-decoration: none;
 }
 

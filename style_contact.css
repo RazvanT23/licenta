@@ -1,4 +1,4 @@
-/* Body */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -6,7 +6,7 @@ body {
     background-color: #f4f4f4;
 }
 
-/* Header and Navigation */
+
 header {
     display: flex;
     justify-content: space-between;
@@ -22,7 +22,7 @@ header .logo {
 }
 
 header .logo img {
-    width: 129px; /* Adjust the size of your logo */
+    width: 129px; 
     height: auto;
     margin-right: 15px;
 }
@@ -30,7 +30,7 @@ header .logo img {
 nav {
     flex-grow: 1;
     text-align: center;
-    margin-left: 400px; /* Ensure the nav is properly centered */
+    margin-left: 400px; 
 }
 
 nav ul {
@@ -55,7 +55,7 @@ nav ul li a:hover {
     color: #ff0000;
 }
 
-/* Contact Form */
+
 main {
     padding: 40px;
 }

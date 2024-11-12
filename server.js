@@ -4,19 +4,19 @@ const path = require('path');
 const { body, validationResult } = require('express-validator');
 const cors = require('cors');
 
-const app = express(); // Initialize app before using it
+const app = express(); 
 app.use(cors());
 
 console.log('Starting server...');
 
-// Middleware to parse form data
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files (like CSS)
+
 app.use(express.static(path.join(__dirname)));
 
-// MySQL connection setup
+
 const db = mysql.createConnection({
     host: '127.0.0.1',
     user: 'root',
@@ -24,7 +24,8 @@ const db = mysql.createConnection({
     database: 'user_authentication'
 });
 
-// Connect to MySQL
+
+
 db.connect((err) => {
     if (err) {
         console.error('Error connecting to MySQL:', err);
@@ -32,12 +33,16 @@ db.connect((err) => {
     }
     console.log('Connected to MySQL');
 });
-// Serve the registration form
+
+
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'register.html'));
 });
 
-// Handle user registration
+
+
+
 app.post('/register', [
     body('email').isEmail().withMessage('Please enter a valid email address'),
     body('password')
@@ -54,7 +59,7 @@ app.post('/register', [
     const email = req.body.email;
     const password = req.body.password;
 
-    // Check if email already exists
+    
     const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
     db.query(checkEmailSql, [email], (err, results) => {
         if (err) {
@@ -65,7 +70,7 @@ app.post('/register', [
             return res.status(400).json({ error: 'Email is already registered.' });
         }
 
-        // Insert new user
+        
         const sql = 'INSERT INTO users (email, password) VALUES (?, ?)';
         db.query(sql, [email, password], (err) => {
             if (err) {
@@ -76,7 +81,7 @@ app.post('/register', [
     });
 });
 
-// Serve the login page
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
@@ -90,7 +95,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Add route for login
+
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -99,7 +104,7 @@ app.post('/login', (req, res) => {
         return res.status(400).json({ success: false, message: "Email and password are required." });
     }
 
-    console.log("Login attempt with:", email, password); // Debugging log
+    console.log("Login attempt with:", email, password); 
 
     const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
     db.query(sql, [email, password], (err, result) => {
@@ -109,16 +114,16 @@ app.post('/login', (req, res) => {
         } 
         
         if (result.length > 0) {
-            console.log("User found:", result[0]); // Debugging log
+            console.log("User found:", result[0]); 
             res.json({ success: true, userId: result[0].id });
         } else {
-            console.log("Invalid credentials provided"); // Debugging log
+            console.log("Invalid credentials provided"); 
             res.json({ success: false, message: "Invalid credentials." });
         }
     });
 });
 
-// Start the server
+
 app.listen(3000, () => {
     console.log('Server running on port 3000');
 });

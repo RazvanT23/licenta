@@ -20,7 +20,6 @@ header {
 
 
 
-
 header .logo {
     display: flex;
     align-items: center;
@@ -119,9 +118,9 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 20px; /* Reduced margin to bring it closer to the footer */
+    margin-top: 20px; 
     padding: 20px;
-    gap: 20px; /* Add some spacing between images and chatbot */
+    gap: 20px; 
 }
 
 
@@ -131,9 +130,9 @@ main {
     padding: 20px;
     text-align: center;
     width: 100%;
-    max-width: 500px; /* Controls max width between images */
+    max-width: 500px; 
     font-size: 20px;
-    margin: 0 auto; /* Centers the chatbot */
+    margin: 0 auto; 
 }
 
 
@@ -161,13 +160,12 @@ main {
 }
 
 
-/* Center .chatbot-info directly below the .chatbot-section */
 .chatbot-info {
     text-align: center;
     margin-top: 20px;
     color: #333;
     max-width: 700px;
-    margin: 0 auto; /* Centers the chatbot-info section */
+    margin: 0 auto; 
     font-size: 20px;
 }
 
@@ -183,10 +181,10 @@ main {
 }
 
 
-/* Style the chatbot response area */
+
 #chatbotResponse {
     margin-top: 15px;
-    text-align: left; /* Aligns responses for better readability */
+    text-align: left; 
     font-size: 18px;
     color: #333;
     max-width: 100%;
@@ -194,10 +192,10 @@ main {
 
 
 .side-image {
-    width: 40%; /* Adjust width to fit better with the chatbot */
-    margin: 0 10px; /* Reduced margin to keep the images closer */
+    width: 40%; 
+    margin: 0 10px; 
     display: flex;
-    justify-content: center; /* Centers image within its container */
+    justify-content: center; 
 }
 
 .left-image, .right-image {
@@ -218,7 +216,7 @@ main {
 
 
 .left-image img, .right-image img {
-    width: 100%; /* Makes the image take up the full width of its container */
+    width: 100%; 
     height: auto;
     object-fit: cover;
     border-radius: 10px;
@@ -231,7 +229,7 @@ footer {
     font-family: Arial, sans-serif;
     text-align: center;
     width: 100%;
-    margin-top: 20px; /* Adds some margin to separate it from content above */
+    margin-top: 20px; 
 }
 
 .footer-container {
@@ -274,5 +272,5 @@ html, body {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    justify-content: center; /* Centers content vertically */
+    justify-content: center; 
 }

@@ -9,18 +9,18 @@ const MySQLStore = require('express-mysql-session')(session);
 const app = express();
 const stripe = Stripe('sk_test_51QGJBUDtj4OjoiAnOLRiS9Bc69l3KL1zd4p1iEbbBTONhQ53vLbqqShJb9i91IWxQP54mFUXOnYfmpPKqWU9Ogis00J3nPkq7e');
 
-// CORS configuration
+
 app.use(cors({
-    origin: 'http://127.0.0.1:5500', // Replace with your actual front-end origin
+    origin: 'http://127.0.0.1:5500', 
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
-    credentials: true // Important for session persistence
+    credentials: true 
 }));
 
 app.use(express.static('public'));
 app.use(express.json());
 
-// Configure MySQL connection
+
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -28,7 +28,7 @@ const db = mysql.createConnection({
     database: 'user_authentication'
 });
 
-// Connect to MySQL
+
 db.connect(err => {
     if (err) {
         console.error('Error connecting to the database:', err);
@@ -37,10 +37,10 @@ db.connect(err => {
     console.log('Connected to the MySQL database.');
 });
 
-// Configure MySQL session store
+
 const sessionStore = new MySQLStore({}, db);
 
-// Configure session middleware with MySQL store
+
 app.use(session({
     secret: 'secret_key',
     resave: false,
@@ -48,40 +48,46 @@ app.use(session({
     store: sessionStore,
     proxy:true,
     cookie: {
-        secure: false,  // Set to true if using HTTPS
+        secure: false,  
         httpOnly: true,
-        sameSite: false 
+        sameSite: 'Lax' 
     }
 }));
 
 
 
-// Middleware to log session ID and data for each request
+
 app.use((req, res, next) => {
     console.log("Session ID:", req.sessionID);
     console.log("Session Data:", req.session);
     next();
 });
 
-// Route to initialize session with userId and cart
+
 app.post('/start-checkout', (req, res) => {
     const { userId, cart } = req.body;
+    
+    if (!userId || !cart || cart.length === 0) {
+        return res.status(400).json({ message: 'Invalid cart or user ID' });
+    }
+
     req.session.userId = userId;
     req.session.cart = cart;
 
     console.log("Session initialized with User ID:", req.session.userId, "Cart:", req.session.cart);
 
-    // Explicitly save the session to ensure persistence
-    req.session.save(err => {
+    req.session.save((err) => {
         if (err) {
             console.error("Error saving session:", err);
-            return res.status(500).json({ message: "Failed to save session." });
+            return res.status(500).json({ message: 'Failed to save session.' });
         }
         res.json({ message: "Session initialized for checkout" });
     });
 });
 
-// Route to create a Stripe checkout session
+
+
+
 app.post('/create-checkout-session', async (req, res) => {
     const items = req.body.items;
     const lineItems = items.map(item => ({
@@ -108,7 +114,7 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 });
 
-// Route to handle successful checkout
+
 app.get('/success', (req, res) => {
     console.log("Session data at /success:", req.session);
 
@@ -120,7 +126,6 @@ app.get('/success', (req, res) => {
         return res.status(400).send("User or Cart not found");
     }
 
-    // Calculate total amount and insert order
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     const orderQuery = 'INSERT INTO orders (user_id, total_amount) VALUES (?, ?)';
@@ -145,5 +150,6 @@ app.get('/success', (req, res) => {
         });
     });
 });
+
 
 app.listen(4242, () => console.log('Server running on port 4242'));
