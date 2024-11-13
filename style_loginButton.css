@@ -7,7 +7,7 @@
     border-radius: 5px;
     margin-right: 20px; 
     position: relative;
-    transform: translate(-45px, 2px); /* Moves the button 25 pixels to the left and 10 pixels down */
+    transform: translate(-45px, 2px); 
 }
 
 .login-btn:hover {

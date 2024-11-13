@@ -30,6 +30,8 @@
             
             <h2>Your Favorite Products</h2>
             <div id="favorites-container" class="favorites-grid"></div>
+            <h2>Recommended for You</h2>
+            <div id="recommendations-container" class="recommendations-grid"></div>
             
             <button onclick="logout()">Logout</button>
         </div>
@@ -39,6 +41,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             fetchUserEmail();
             fetchFavorites();
+            fetchRecommendations();
         });
     
         function fetchUserEmail() {
@@ -90,6 +93,38 @@
             .catch(error => console.error("Error removing favorite:", error));
         }
         
+
+
+
+        function fetchRecommendations() {
+    const userId = localStorage.getItem("userId");
+    fetch(`http://localhost:4243/get-recommendations/${userId}`)
+        .then(response => response.json())
+        .then(recommendations => {
+            console.log("Recommendations:", recommendations);  // Check recommendations in console
+            const container = document.getElementById("recommendations-container");
+            container.innerHTML = "";
+            recommendations.forEach(product => {
+                const productDiv = document.createElement("div");
+                productDiv.className = "product-card";
+                productDiv.innerHTML = `
+                    <img src="${product.image_url}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p>Price: $${product.price.toFixed(2)}</p>
+                    <button onclick="addToFavorites(${product.id})">Add to Favorites</button>
+                `;
+                container.appendChild(productDiv);
+            });
+        })
+        .catch(error => console.error("Error fetching recommendations:", error));
+}
+
+
+
+
+
+
         function logout() {
             // Clear login-related data from localStorage
             localStorage.removeItem("isLoggedIn");

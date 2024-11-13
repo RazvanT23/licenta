@@ -57,7 +57,7 @@
                 </tr>
             </thead>
             <tbody id="cart-items">
-                <!-- Items will be dynamically inserted here -->
+
             </tbody>
         </table>
         <div class="cart-summary">
@@ -72,7 +72,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             loadCartItems();
-            updateCartCount(); // Update the cart count when the cart page is loaded
+            updateCartCount(); 
         
             document.getElementById('cart-items').addEventListener('input', function (event) {
                 if (event.target.classList.contains('quantity-input')) {
@@ -90,45 +90,44 @@
             });
         });
         document.getElementById('checkout-btn').addEventListener('click', async function () {
-    const stripe = Stripe('pk_test_51QGJBUDtj4OjoiAnRnliveJFmN7LEf1zkDuPSLn326rTSmbbLyLBSA8ymg3PKWBeCagq4SvmHXbnNL9qxnR55J1S00wn09dl2K');
-    let cart = localStorage.getItem('cart');
-    cart = cart ? JSON.parse(cart) : [];
+        const stripe = Stripe('pk_test_51QGJBUDtj4OjoiAnRnliveJFmN7LEf1zkDuPSLn326rTSmbbLyLBSA8ymg3PKWBeCagq4SvmHXbnNL9qxnR55J1S00wn09dl2K');
+         let cart = localStorage.getItem('cart');
+         cart = cart ? JSON.parse(cart) : [];
 
-    const userId = localStorage.getItem("userId"); // Retrieve actual user ID
+         const userId = localStorage.getItem("userId"); // Ensure user is logged in and has a valid userId
 
-    if (!userId) {
-        alert("Please log in before proceeding to checkout.");
+         if (!userId) {
+             alert("Please log in before proceeding to checkout.");
+         return;
+        }
+
+        if (cart.length === 0) {
+            alert("Your cart is empty");
         return;
-    }
+         }
 
-    if (cart.length === 0) {
-        alert("Your cart is empty");
-        return;
-    }
-
-    try {
-        // Initialize session with userId and cart data
+        try {
+        // Initialize session with cart and user data
         await fetch('http://localhost:4242/start-checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include', // Include cookies with requests
-
+            credentials: 'include', // To include cookies with the request
             body: JSON.stringify({ userId, cart })
         });
 
         // Create Stripe checkout session
-const response = await fetch('http://localhost:4242/create-checkout-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', // Include cookies with requests
-    body: JSON.stringify({ items: cart, userId })
-});
+        const response = await fetch('http://localhost:4242/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', 
+            body: JSON.stringify({ items: cart, userId })
+        });
 
         const session = await response.json();
         await stripe.redirectToCheckout({ sessionId: session.id });
-    } catch (error) {
+        } catch (error) {
         console.error("Error during checkout:", error);
-    }
+          }
 });
 
         

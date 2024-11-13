@@ -138,6 +138,44 @@ app.get('/get-user-email/:userId', (req, res) => {
 
 
 
+app.get('/get-recommendations/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    const query = `
+        SELECT p.id, p.name, p.description, p.price, p.image_url
+        FROM products p
+        JOIN favorites f ON p.id = f.product_id
+        WHERE f.user_id IN (
+            SELECT DISTINCT f2.user_id
+            FROM favorites f1
+            JOIN favorites f2 ON f1.product_id = f2.product_id AND f1.user_id != f2.user_id
+            WHERE f1.user_id = ?
+        )
+        AND p.id NOT IN (
+            SELECT product_id FROM favorites WHERE user_id = ?
+        )
+        GROUP BY p.id
+        ORDER BY COUNT(f.user_id) DESC
+        LIMIT 2;  
+    `;
+
+    db.query(query, [userId, userId], (err, results) => {
+        if (err) {
+            console.error('Error fetching recommendations:', err);
+            res.status(500).send('Error fetching recommendations');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+
+
+
+
+
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
