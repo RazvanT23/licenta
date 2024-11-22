@@ -1,0 +1,159 @@
+/* success.css */
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Styles */
+header {
+    background-color: #ffffff;
+    color: rgb(23, 33, 170);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Ensures logo and button are on opposite sides */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header .logo {
+    margin-left: 20px; /* Keeps the logo aligned to the left */
+}
+
+header .logo img {
+    width: 130px;
+    height: auto;
+}
+
+header nav {
+    flex-grow: 1; /* Allows the navigation to occupy the space between logo and button */
+    display: flex;
+    justify-content: center;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+header nav ul li a {
+    color: #333;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #ff0000;
+}
+
+/* Right-Aligned Button Styles */
+header .login-btn,
+header .dashboard-btn {
+    margin-right: 20px;
+    background-color: #ff0000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+header .login-btn:hover,
+header .dashboard-btn:hover {
+    background-color: #b30000;
+}
+
+/* Success Container Styles */
+.success-container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.success-container h1 {
+    font-size: 2.2em;
+    color: #4CAF50; /* Green for success */
+    margin-bottom: 20px;
+}
+
+.success-container p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.success-container a.btn {
+    display: inline-block;
+    background-color: #ff0000;
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.success-container a.btn:hover {
+    background-color: #b30000;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    width: 100%;
+    margin-top: auto;
+}
+
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    margin: auto;
+}
+
+.footer-about h2 {
+    font-size: 18px;
+    color: #ff0000;
+    margin-bottom: 10px;
+}
+
+.footer-about p {
+    font-size: 14px;
+    color: #ccc;
+    max-width: 600px;
+}
+
+.footer-bottom {
+    margin-top: 10px;
+}
+
+.footer-bottom p {
+    font-size: 14px;
+    color: #ccc;
+}

@@ -1,26 +1,16 @@
+// server_stripe_backend.js
+
 const express = require('express');
-const Stripe = require('stripe');
-const session = require('express-session');
-const mysql = require('mysql');
-const path = require('path');
-const cors = require('cors');
-const MySQLStore = require('express-mysql-session')(session);
-
 const app = express();
-const stripe = Stripe('sk_test_51QGJBUDtj4OjoiAnOLRiS9Bc69l3KL1zd4p1iEbbBTONhQ53vLbqqShJb9i91IWxQP54mFUXOnYfmpPKqWU9Ogis00J3nPkq7e');
+const Stripe = require('stripe');
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+const cors = require('cors');
 
+// Initialize Stripe with your secret key
+const stripe = Stripe('sk_test_51QGJBUDtj4OjoiAnOLRiS9Bc69l3KL1zd4p1iEbbBTONhQ53vLbqqShJb9i91IWxQP54mFUXOnYfmpPKqWU9Ogis00J3nPkq7e'); // Replace with your actual secret key
 
-app.use(cors({
-    origin: 'http://127.0.0.1:5500', 
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'],
-    credentials: true 
-}));
-
-app.use(express.static('public'));
-app.use(express.json());
-
-
+// Database connection setup
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -28,128 +18,138 @@ const db = mysql.createConnection({
     database: 'user_authentication'
 });
 
-
-db.connect(err => {
-    if (err) {
-        console.error('Error connecting to the database:', err);
-        throw err;
-    }
-    console.log('Connected to the MySQL database.');
+// Connect to the database
+db.connect((err) => {
+  if (err) {
+    console.error('Error connecting to the MySQL database:', err);
+    return;
+  }
+  console.log('Connected to the MySQL database.');
 });
 
+// Serve static files
+app.use(express.static(__dirname)); // Serves static files from the current directory
 
-const sessionStore = new MySQLStore({}, db);
+// Use CORS if needed
+app.use(cors());
 
-
-app.use(session({
-    secret: 'secret_key',
-    resave: false,
-    saveUninitialized: false,
-    store: sessionStore,
-    proxy:true,
-    cookie: {
-        secure: false,  
-        httpOnly: true,
-        sameSite: 'Lax' 
-    }
-}));
-
-
-
-
+// ***** Logging middleware (Place this before route definitions) *****
 app.use((req, res, next) => {
-    console.log("Session ID:", req.sessionID);
-    console.log("Session Data:", req.session);
+    console.log(`Incoming request: ${req.method} ${req.url}`);
     next();
 });
 
+// ***** Apply raw body parser for /webhook route (Place this before applying bodyParser.json()) *****
+app.post('/webhook', express.raw({ type: '*/*' }), (request, response) => {
+  const endpointSecret = 'whsec_29f9e642bf4d7b6cde23be6369902610b81200b8c32efd99f8d0568ed89b8625'; // Use your webhook signing secret
 
-app.post('/start-checkout', (req, res) => {
-    const { userId, cart } = req.body;
-    
-    if (!userId || !cart || cart.length === 0) {
-        return res.status(400).json({ message: 'Invalid cart or user ID' });
-    }
+  const sig = request.headers['stripe-signature'];
+  let event;
 
-    req.session.userId = userId;
-    req.session.cart = cart;
+  try {
+      // Verify the webhook signature and extract the event
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+      console.log('Webhook event received:', event.type);
+  } catch (err) {
+      console.error('Webhook signature verification failed:', err.message);
+      return response.status(400).send(`Webhook Error: ${err.message}`);
+  }
 
-    console.log("Session initialized with User ID:", req.session.userId, "Cart:", req.session.cart);
+  // Handle the event
+  if (event.type === 'checkout.session.completed') {
+      console.log('Processing checkout.session.completed event');
+      const session = event.data.object;
+      handleCheckoutSession(session);
+  } else {
+      console.log(`Unhandled event type: ${event.type}`);
+  }
 
-    req.session.save((err) => {
-        if (err) {
-            console.error("Error saving session:", err);
-            return res.status(500).json({ message: 'Failed to save session.' });
-        }
-        res.json({ message: "Session initialized for checkout" });
-    });
+  // Return a 200 response to acknowledge receipt of the event
+  response.json({ received: true });
 });
 
+// ***** Apply JSON body parser for all other routes (After /webhook route) *****
+app.use(bodyParser.json());
 
-
-
+// Define other routes after middleware
 app.post('/create-checkout-session', async (req, res) => {
-    const items = req.body.items;
+    const { items, userId } = req.body;
+  
+    // Map your items to match the format required by Stripe
     const lineItems = items.map(item => ({
-        price_data: {
-            currency: 'usd',
-            product_data: { name: item.name },
-            unit_amount: Math.round(item.price * 100),
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: item.name,
         },
-        quantity: item.quantity,
+        unit_amount: Math.round(item.price * 100), // Stripe expects amount in cents
+      },
+      quantity: item.quantity,
     }));
-
+  
     try {
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: lineItems,
-            mode: 'payment',
-            success_url: 'http://localhost:4242/success',
-            cancel_url: 'http://localhost:4242/cancel',
-        });
-        res.json({ id: session.id });
-    } catch (error) {
-        console.error('Error creating Stripe checkout session:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-
-app.get('/success', (req, res) => {
-    console.log("Session data at /success:", req.session);
-
-    const userId = req.session.userId;
-    const cart = req.session.cart;
-
-    if (!userId || !cart) {
-        console.error("User or Cart not found in session");
-        return res.status(400).send("User or Cart not found");
-    }
-
-    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-    const orderQuery = 'INSERT INTO orders (user_id, total_amount) VALUES (?, ?)';
-    db.query(orderQuery, [userId, totalAmount], (err, orderResult) => {
-        if (err) {
-            console.error("Error inserting order:", err);
-            return res.status(500).send("Internal Server Error");
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: lineItems,
+        mode: 'payment',
+        success_url: 'http://localhost:4242/success.html',
+        cancel_url: 'http://localhost:4242/cancel.html',
+        metadata: {
+          userId: userId.toString(),
+          cart: JSON.stringify(items)
         }
-
-        const orderId = orderResult.insertId;
-        const orderItemsData = cart.map(item => [orderId, item.id, item.quantity, item.price]);
-
-        const orderItemsQuery = 'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?';
-        db.query(orderItemsQuery, [orderItemsData], (itemsErr) => {
-            if (itemsErr) {
-                console.error("Error inserting order items:", itemsErr);
-                return res.status(500).send("Internal Server Error");
-            }
-
-            req.session.cart = null; // Clear cart after successful order creation
-            res.sendFile(path.join(__dirname, 'succes.html'));
-        });
-    });
+      });
+  
+      res.json({ id: session.id });
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      res.status(500).send('An error occurred while creating the checkout session.');
+    }
 });
 
+// Function to handle the checkout session
+async function handleCheckoutSession(session) {
+  console.log('handleCheckoutSession called with session:', session.id);
+  const userId = parseInt(session.metadata.userId);
+  const cart = JSON.parse(session.metadata.cart);
 
+  console.log('User ID:', userId);
+  console.log('Cart:', cart);
+
+  if (!userId || !cart) {
+    console.error("User ID or cart not found in session metadata.");
+    return;
+  }
+
+  
+
+  const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  console.log('Total Amount:', totalAmount);
+
+  // Insert order into database
+  const orderQuery = 'INSERT INTO orders (user_id, total_amount) VALUES (?, ?)';
+  db.query(orderQuery, [userId, totalAmount], (err, orderResult) => {
+    if (err) {
+      console.error("Error inserting order:", err);
+      return;
+    }
+
+    const orderId = orderResult.insertId;
+    console.log('Order ID:', orderId);
+
+    const orderItemsData = cart.map(item => [orderId, item.id, item.quantity, item.price]);
+    console.log('Order Items Data:', orderItemsData);
+
+    const orderItemsQuery = 'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?';
+    db.query(orderItemsQuery, [orderItemsData], (itemsErr) => {
+      if (itemsErr) {
+        console.error("Error inserting order items:", itemsErr);
+      } else {
+        console.log(`Order ${orderId} and its items have been saved.`);
+      }
+    });
+  });
+}
+
+// Start the server
 app.listen(4242, () => console.log('Server running on port 4242'));
