@@ -2,32 +2,26 @@ from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
 
-
-# Load model and vectorizer
+# Load the trained model
 model = joblib.load("refund_model.pkl")
-vectorizer = joblib.load("refund_vectorizer.pkl")
 
 app = Flask(__name__)
 
 @app.route("/evaluate-refund", methods=["POST"])
 def evaluate_refund():
+    # Parse the incoming JSON request
     data = request.json
-    reason = data["reason"]
-    order_amount = data["order_amount"]
-    previous_refunds = data["previous_refunds"]
+    reason = data.get("reason", "")
 
-    # Transform inputs
-    reason_vectorized = vectorizer.transform([reason])
-    numeric_features = [[order_amount, previous_refunds]]
-    features = pd.concat(
-    [pd.DataFrame(reason_vectorized.toarray()), pd.DataFrame(numeric_features)],
-    axis=1
-)
+    # Prepare the input for prediction
+    input_data = pd.Series([reason])
 
+    # Make a prediction
+    prediction = model.predict(input_data)
+    approved = bool(int(prediction[0]))
 
-    # Predict
-    prediction = model.predict(features)
-    return jsonify({"approved": bool(prediction[0])})
+    # Return the response as JSON
+    return jsonify({"approved": approved})
 
 if __name__ == "__main__":
     app.run(port=5000)

@@ -30,6 +30,7 @@
             <p>Here, you can view your account details, orders, and favorites.</p>
             <h2>Your Order History</h2>
             <div id="orders-container" class="orders-grid"></div>
+
             
             <h2>Your Favorite Products</h2>
             <div id="favorites-container" class="favorites-grid"></div>
@@ -171,53 +172,69 @@ function requestRefund(orderId) {
 
     const userId = localStorage.getItem("userId");
 
-    // Mocking order amount and previous refunds (replace with dynamic values if available)
-    const orderAmount = 100; // Replace with actual order amount
-    const previousRefunds = 1; // Replace with actual count of previous refunds
-
     // Call refund evaluation API
     fetch('http://localhost:4243/evaluate-refund', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason, orderAmount, previousRefunds })
+        body: JSON.stringify({ reason })
     })
     .then(response => response.json())
-    .then(data => {
-        if (data.approved) {
+    .then(result => {
+        if (result.approved) {
             alert("Refund approved automatically!");
+
+            // Submit the refund request with status "Approved"
+            submitRefundRequest(orderId, userId, reason, "Approved");
+
+            // Update the refund status in the UI
             updateRefundStatus(orderId, "Approved");
         } else {
             alert("Refund request submitted for manual review.");
-            submitRefundRequest(orderId, userId, reason);
+
+            // Submit the refund request with status "Pending"
+            submitRefundRequest(orderId, userId, reason, "Pending");
+
+            // Update the refund status in the UI
+            updateRefundStatus(orderId, "Pending");
         }
     })
     .catch(error => console.error("Error evaluating refund:", error));
 }
 
-function submitRefundRequest(orderId, userId, reason) {
+
+
+
+
+
+
+
+
+function submitRefundRequest(orderId, userId, reason, status) {
     fetch('http://localhost:4243/request-refund', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, userId, reason })
+        body: JSON.stringify({ orderId, userId, reason, status })
     })
     .then(response => response.text())
     .then(message => {
-        alert(message);
-
-        // Update the card to show refund status and cancel button
-        updateRefundStatus(orderId, "Pending");
+        console.log(message);
     })
     .catch(error => console.error("Error submitting refund request:", error));
 }
 
+
+
+
 function updateRefundStatus(orderId, status) {
     const refundActions = document.getElementById(`refund-actions-${orderId}`);
+    const refundStatusColor = status === "Approved" ? "green" :
+                              status === "Pending" ? "orange" : "red";
+
     refundActions.innerHTML = `
-        <p>Status: <span style="color: ${status === 'Approved' ? 'green' : 'orange'};">${status}</span></p>
+        <p>Status: <span style="color: ${refundStatusColor};">${status}</span></p>
         ${status === 'Pending' ? `<button onclick="cancelRefund(${orderId})" style="background-color: #ffa500;">Cancel Refund</button>` : ''}
     `;
 }
-
 
 
 
@@ -242,6 +259,17 @@ function cancelRefund(orderId) {
 
 
 
+function evaluatePendingRefunds() {
+    fetch('http://localhost:4243/evaluate-pending-refunds', {
+        method: 'POST'
+    })
+    .then(response => response.text())
+    .then(message => {
+        alert(message);
+        fetchOrders(); // Refresh orders to show updated statuses
+    })
+    .catch(error => console.error("Error evaluating pending refunds:", error));
+}
 
 
 

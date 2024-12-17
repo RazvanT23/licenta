@@ -1,11 +1,11 @@
-﻿reason,order_amount,previous_refunds,label
-Product damaged upon arrival,1,1,1
-Received wrong item,2,1,1
-No longer needed,4,0,0
-Product did not match description,5,0,1
-Product arrived late,7,0,0
-Found a cheaper alternative,6,2,0
-Repeated issue with the same product,2,0,0
-Gift not needed anymore,4,0,0
-Item defective after use,2,0,0
-Changed my mind about the purchase,5,1,0
+reason,label
+Product damaged upon arrival,1
+Received wrong item,1
+Customer changed their mind,0
+Product used or opened,0
+Item arrived late,0
+Incorrect item description,1
+Defective product,1
+Missing parts or accessories,1
+Product better price elsewhere,0
+Did not fit or suit needs,0

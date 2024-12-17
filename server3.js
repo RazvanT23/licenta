@@ -204,13 +204,13 @@ app.get('/get-orders/:userId', (req, res) => {
 
 
 app.post('/request-refund', (req, res) => {
-    const { orderId, userId, reason } = req.body;
+    const { orderId, userId, reason, status } = req.body;
 
     const query = `
         INSERT INTO refund_requests (order_id, user_id, reason, status)
-        VALUES (?, ?, ?, 'Pending')
+        VALUES (?, ?, ?, ?)
     `;
-    db.query(query, [orderId, userId, reason], (err, result) => {
+    db.query(query, [orderId, userId, reason, status], (err, result) => {
         if (err) {
             console.error('Error creating refund request:', err);
             res.status(500).send('Error creating refund request');
@@ -219,6 +219,9 @@ app.post('/request-refund', (req, res) => {
         }
     });
 });
+
+
+
 
 
 
@@ -240,16 +243,80 @@ app.post('/cancel-refund', (req, res) => {
 });
 
 
+
+
+
+
 app.post('/evaluate-refund', (req, res) => {
-    const { reason, orderAmount, previousRefunds } = req.body;
+    const { reason } = req.body;
 
     const axios = require('axios');
     axios.post('http://localhost:5000/evaluate-refund', {
-        reason, order_amount: orderAmount, previous_refunds: previousRefunds
+        reason
     })
     .then(response => res.json(response.data))
-    .catch(error => res.status(500).send('Error evaluating refund'));
+    .catch(error => {
+        console.error('Error evaluating refund:', error);
+        res.status(500).send('Error evaluating refund');
+    });
 });
+
+
+
+
+
+
+
+
+
+app.post('/evaluate-pending-refunds', (req, res) => {
+    const query = `SELECT rr.id AS refund_id, rr.reason
+                   FROM refund_requests rr
+                   WHERE rr.status = 'Pending'`;
+
+    db.query(query, (err, refunds) => {
+        if (err) {
+            console.error('Error fetching pending refunds:', err);
+            res.status(500).send('Error fetching pending refunds');
+        } else {
+            const axios = require('axios');
+            const promises = refunds.map(refund => {
+                return axios.post('http://localhost:5000/evaluate-refund', {
+                    reason: refund.reason
+                })
+                .then(response => {
+                    const newStatus = response.data.approved ? 'Approved' : 'Rejected';
+                    return { refundId: refund.refund_id, status: newStatus };
+                });
+            });
+
+            Promise.all(promises)
+                .then(results => {
+                    const updateQueries = results.map(result => {
+                        return new Promise((resolve, reject) => {
+                            const updateQuery = 'UPDATE refund_requests SET status = ? WHERE id = ?';
+                            db.query(updateQuery, [result.status, result.refundId], (err) => {
+                                if (err) reject(err);
+                                else resolve();
+                            });
+                        });
+                    });
+
+                    Promise.all(updateQueries)
+                        .then(() => res.send('Pending refunds evaluated successfully'))
+                        .catch(err => {
+                            console.error('Error updating refund statuses:', err);
+                            res.status(500).send('Error updating refund statuses');
+                        });
+                })
+                .catch(err => {
+                    console.error('Error evaluating refunds:', err);
+                    res.status(500).send('Error evaluating refunds');
+                });
+        }
+    });
+});
+
 
 
 
