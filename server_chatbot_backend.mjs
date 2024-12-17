@@ -49,9 +49,26 @@ app.post('/chat', async (req, res) => {
             if (match) {
                 parsedData = { order_id: match[1], reason: match[2].trim() };
             } else {
-                res.status(400).json({ reply: "Unable to parse refund details. Please rephrase your request." });
+                // If unable to parse refund details, fallback to HuggingFace for a general response
+                const generalResponse = await fetch(`https://api-inference.huggingface.co/models/${MODEL_NAME}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': HF_API_TOKEN,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        inputs: `The user says: "${message}". Respond as a helpful and friendly chatbot.`,
+                        parameters: { max_length: 100, temperature: 0.7 }
+                    })
+                });
+            
+                const generalData = await generalResponse.json();
+                const generalReply = generalData[0]?.generated_text.trim() || "I'm sorry, I didn't understand that.";
+            
+                res.json({ reply: generalReply });
                 return;
             }
+            
         }
 
         const { order_id, reason } = parsedData;
@@ -92,7 +109,6 @@ app.post('/chat', async (req, res) => {
         res.status(500).json({ reply: "Error processing your request." });
     }
 });
-
 
 
 
