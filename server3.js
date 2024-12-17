@@ -174,19 +174,19 @@ app.get('/get-recommendations/:userId', (req, res) => {
 app.get('/get-orders/:userId', (req, res) => {
     const userId = req.params.userId;
     const query = `
-        SELECT 
-            o.id AS order_id, 
-            o.total_amount, 
-            o.order_date, 
-            GROUP_CONCAT(p.name) AS product_names,
-            IFNULL(ANY_VALUE(rr.status), 'None') AS refund_status
-        FROM orders o
-        LEFT JOIN order_items oi ON o.id = oi.order_id
-        LEFT JOIN products p ON oi.product_id = p.id
-        LEFT JOIN refund_requests rr ON o.id = rr.order_id
-        WHERE o.user_id = ?
-        GROUP BY o.id
-        ORDER BY o.order_date DESC;
+    SELECT SQL_NO_CACHE 
+    o.id AS order_id, 
+    o.total_amount, 
+    o.order_date, 
+    GROUP_CONCAT(p.name) AS product_names,
+    IFNULL(ANY_VALUE(rr.status), 'None') AS refund_status
+    FROM orders o
+    LEFT JOIN order_items oi ON o.id = oi.order_id
+    LEFT JOIN products p ON oi.product_id = p.id
+    LEFT JOIN refund_requests rr ON o.id = rr.order_id
+    WHERE o.user_id = ?
+    GROUP BY o.id
+    ORDER BY o.order_date DESC;
     `;
     db.query(query, [userId], (err, results) => {
         if (err) {
@@ -197,7 +197,7 @@ app.get('/get-orders/:userId', (req, res) => {
         }
     });
 });
-
+ 
 
 
 

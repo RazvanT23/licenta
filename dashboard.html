@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
     <link rel="stylesheet" href="style_dashboard.css"> 
+    <script src="chatbot.js"></script>
+
 </head>
 <body>
     <header>
         <div class="logo">
             <a href="home.html">
-                <img src="logo2.png" alt="Tsunami Nutrition Logo">
+                <img src="logo5.png" alt="Fightzone Nutrition Logo">
             </a>
         </div>
         <nav>
@@ -28,7 +30,17 @@
 
             <h1 id="greeting">Welcome to Your Dashboard</h1>
             <p>Here, you can view your account details, orders, and favorites.</p>
-            <h2>Your Order History</h2>
+
+            <div class="chatbot-container">
+                <div class="chatbot">
+                    <h2>Chatbot Assistant</h2>
+                    <p>Enter your question to get a detailed and helpful response.</p>
+                    <input type="text" id="userInput" placeholder="Type your message here...">
+                    <button onclick="sendMessage()">Send</button>
+                    <div id="chatbotResponse"></div>
+                </div>
+            </div>
+
             <div id="orders-container" class="orders-grid"></div>
 
             
@@ -36,7 +48,8 @@
             <div id="favorites-container" class="favorites-grid"></div>
             <h2>Recommended for You</h2>
             <div id="recommendations-container" class="recommendations-grid"></div>
-            
+
+                        
             <button onclick="logout()">Logout</button>
         </div>
     </main>
@@ -287,12 +300,12 @@ function evaluatePendingRefunds() {
     <footer>
         <div class="footer-container">
             <div class="footer-about">
-                <h2>About Tsunami Nutrition</h2>
+                <h2>About Fightzone Nutrition</h2>
                 <p>Your ultimate destination for high-quality fitness supplements and gear. Empowering you to achieve your fitness goals.</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Tsunami Nutrition | All Rights Reserved</p>
+            <p>&copy; 2024 Fightzone Nutrition | All Rights Reserved</p>
         </div>
     </footer>
 </body>
